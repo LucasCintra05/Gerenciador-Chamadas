@@ -19,7 +19,7 @@
     </style>
 </head>
     <body>
-        <h1>Produtos Cadastrados</h1>
+        <h1>Chamadas</h1>
         <form action="" id="form_chamados">
             <input type="text" name="" id="titulo" placeholder="Titulo da Chamada" required>
             <input type="text" name="" id="descricao" placeholder="Descrição da Chamada" required>
@@ -82,9 +82,10 @@
             async function atualizar_status(id) {
                 const res = await fetch(`/chamados/${id}/status`, {
                     method: 'PATCH',
+                    headers:{'Content-Type': 'application/json'}
                     
                 })
-
+                
                 if(res.ok){
                     alert('Status atualizado com sucesso.')
                     window.location.reload()
@@ -99,7 +100,8 @@
 
                 const res = await fetch(`/chamados/${id}`, {
                     method: 'DELETE',
-
+                    headers:{'Content-Type': 'application/json'}
+                    
                 })
                 if(res.ok){
                     alert('Chamado deletado com sucesso.')

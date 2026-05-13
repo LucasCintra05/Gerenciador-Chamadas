@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=], initial-scale=1.0">
+    <title>Lista Chamadas</title>
+    <style>
+        body{ font-family: Arial, Helvetica, sans-serif; padding: 20px;}
+        table{border-collapse: collapse; width: 100%;}
+        th,td{border: 1px solid #ddd; padding: 8px;}
+        th{background-color: #222;color: white;}
+        form{margin-bottom: 20px;}
+        input{margin-right: 10px; padding: 5px;}
+        button{padding: 5px 10px;}
+        .deletar_btn{background-color: red; color: white;}
+    </style>
+</head>
+    <body>
+        <h1>Produtos Cadastrados</h1>
+        <form action="" id="form_chamados">
+            <input type="text" name="" id="titulo" placeholder="Titulo da Chamada" required>
+            <input type="text" name="" id="descricao" placeholder="Descrição da Chamada" required>
+            <input type="text" name="" id="prioridade" placeholder="Prioridade da Chamada" required>
+            <button type="submit" onclick="">Cadastrar</button>
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Descrição</th>
+                    <th>Prioridade</th>
+                    <th>Status</th>
+                    <th>Deletar</th>
+                </tr>
+            </thead>
+            <tbody id="copor_tabela">
+                <% chamados.forEach(chamados =>{%>
+                <tr>
+                    <td id="td_id"><%= chamados.id %></td>
+                    <td><%= chamados.titulo %></td>
+                    <td><%= chamados.descricao %></td>
+                    <td><%= chamados.prioridade %></td>
+                    <td><%= chamados.status %></td>
+                    <td><button class="deletar_btn" onclick="remover(<%= chamados.id %>)">X</button></td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+        <script> //quem executa esse script é a maquina cliente - a comunicação que fazemos aqui é com a API
+            const form = document.getElementById('form_chamados')
+
+            async function remover(id){
+                const res = await fetch('/produtos' + id, {
+                    method: 'DELETE',
+                    headers:{'Content-Type': 'application/json'}
+
+                })
+                if(res.ok){
+                    alert('Chamado deletado com sucesso.')
+                    window.location.reload()
+                }else{
+                    alert('Erro ao deletar chamado.')
+                }
+            }
+            
+            
+            form.addEventListener('submit', async(e)=>{
+                e.preventDefault()
+                const titulo = document.getElementById('titulo').value
+                const descricao = document.getElementById('descricao').value
+                const prioridade = document.getElementById('prioridade').value
+
+                const res = await fetch('/chamados', { //temos q configurar a chamada que fazermos a API
+                    method: 'POST',
+                    headers:{'Content-Type': 'application/json'},
+                    body: JSON.stringify({titulo, descricao, prioridade})
+                })
+
+                if(res.ok){
+                    alert('Chamado cadastrado com sucesso.')
+                    window.location.reload()
+                }else{
+                    alert('Erro ao cadastrar chamado.')
+                }
+
+            })
+        </script>
+    </body>
+</html>

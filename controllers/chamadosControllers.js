@@ -72,6 +72,15 @@ exports.atualizarChamados = async(req, res)=>{
         return res.status(404).json({erro: "Chamado não encontrado"})
         
     }
+
+    if(!titulo.trim() || !descricao.trim() || !prioridadeTratada.trim()){
+        return res.status(400).json({erro: "Titulo, descrição e prioridade devem estar preenchidos."})
+    }
+    
+    if(prioridadeTratada.trim() !== "BAIXA" && prioridadeTratada.trim() !== "MEDIA" && prioridadeTratada.trim() !== "ALTA"){
+        return res.status(400).json({erro: "Prioridade devem estar preenchidos com [BAIXA, MEDIA, ALTA]."})
+
+    }
     
     if(chamado.status === "FINALIZADO"){
         return res.status(400).json({erro: "O chamado não pode ser atualizado após finalizado."})
@@ -79,8 +88,10 @@ exports.atualizarChamados = async(req, res)=>{
     }
     
     const {titulo, descricao, prioridade} = req.body
+
+    const prioridadeTratada = prioridade.toUpperCase()
     
-    await chamado.update({titulo, descricao, prioridade})
+    await chamado.update({titulo, descricao, prioridadeTratada})
     
     res.status(200).json({ok: 'Atualização bem sucedida.'})
 }

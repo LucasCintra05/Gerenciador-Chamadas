@@ -1,8 +1,8 @@
 const express = require('express')
 const sequelize = require('./config/database')
 const Chamado = require('./models/chamados')
-const viewRoutes = require('./routes/viewsRoutes')
-const routesAtividade = require('./routes/chamadosRoutes')
+const viewsRoutes = require('./routes/viewsRoutes')
+const chamadosRoutes = require('./routes/chamadosRoutes')
 const app = express()
 const port = 3000
 
@@ -10,9 +10,9 @@ app.use(express.json())
 
 app.set('view engine', 'ejs')
 
-app.use('/', viewRoutes)
+app.use('/', viewsRoutes)
 
-app.use('/chamados', routesAtividade)
+app.use('/chamados', chamadosRoutes)
 
 sequelize.sync().then(()=>{
     console.log("Banco de dados OK!")

@@ -12,7 +12,10 @@
         form{margin-bottom: 20px;}
         input{margin-right: 10px; padding: 5px;}
         button{padding: 5px 10px;}
-        .deletar_btn{background-color: red; color: white;}
+        .deletar_btn{background-color: red; color: white; border: white solid; border-radius: 5px;}
+        .status_btn{background-color: rgba(255, 255, 0, 0.772); color: black; border: white solid; border-radius: 5px;}
+        .editar_btn{background-color: rgba(3, 149, 165, 0.772); color: white; border: white solid; border-radius: 5px;}
+        #td_button{display: grid; grid-auto-flow: column; gap: 5px}
     </style>
 </head>
     <body>
@@ -31,7 +34,7 @@
                     <th>Descrição</th>
                     <th>Prioridade</th>
                     <th>Status</th>
-                    <th>Deletar</th>
+                    <th>Ações</th>
                 </tr>
             </thead>
             <tbody id="copor_tabela">
@@ -42,7 +45,12 @@
                     <td><%= chamados.descricao %></td>
                     <td><%= chamados.prioridade %></td>
                     <td><%= chamados.status %></td>
-                    <td><button class="deletar_btn" onclick="remover(<%= chamados.id %>)">X</button></td>
+                    <td id="td_button">
+                        <button class="deletar_btn" onclick="remover(<%= chamados.id %>)">X</button>
+                        <button class="status_btn" onclick="atualizar_status(<%= chamados.id %>)">Status</button>
+                        <button class="editar_btn" onclick="editar_chamados(<%= chamados.id %>)">Editar</button>
+                    </td>
+                    
                 </tr>
                 <% }) %>
             </tbody>
@@ -50,10 +58,47 @@
         <script> //quem executa esse script é a maquina cliente - a comunicação que fazemos aqui é com a API
             const form = document.getElementById('form_chamados')
 
+            async function editar_chamados(id) {
+                const titulo = document.getElementById('titulo').value
+                const descricao = document.getElementById('descricao').value
+                const prioridade = document.getElementById('prioridade').value.toUpperCase()
+
+                const res = await fetch(`chamados/${id}`, {
+                    method: 'PUT',
+                    headers:{'Content-Type': 'application/json'},
+                    body: JSON.stringify({titulo, descricao, prioridade})
+
+                })
+
+                if(res.ok){
+                    alert('Chamado editado com sucesso.')
+                    window.location.reload()
+                }else{
+                    alert('Erro ao editar chamado.')
+                }
+
+            }
+
+            async function atualizar_status(id) {
+                const res = await fetch(`/chamados/${id}/status`, {
+                    method: 'PATCH',
+                    
+                })
+
+                if(res.ok){
+                    alert('Status atualizado com sucesso.')
+                    window.location.reload()
+                }else{
+                    alert('Erro ao atualizar chamado.')
+                }
+                
+            }
+
             async function remover(id){
-                const res = await fetch('/produtos' + id, {
+                if(!confirm('Deseja realmente deletar este chamado?'))return
+
+                const res = await fetch(`/chamados/${id}`, {
                     method: 'DELETE',
-                    headers:{'Content-Type': 'application/json'}
 
                 })
                 if(res.ok){
@@ -69,7 +114,7 @@
                 e.preventDefault()
                 const titulo = document.getElementById('titulo').value
                 const descricao = document.getElementById('descricao').value
-                const prioridade = document.getElementById('prioridade').value
+                const prioridade = document.getElementById('prioridade').value.toUpperCase()
 
                 const res = await fetch('/chamados', { //temos q configurar a chamada que fazermos a API
                     method: 'POST',
